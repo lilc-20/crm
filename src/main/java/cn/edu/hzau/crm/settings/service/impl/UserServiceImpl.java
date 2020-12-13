@@ -8,6 +8,7 @@ import cn.edu.hzau.crm.utils.DateTimeUtil;
 import cn.edu.hzau.crm.utils.SqlSessionUtil;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class UserServiceImpl implements UserService {
 
@@ -41,5 +42,10 @@ public class UserServiceImpl implements UserService {
 
         return user;
 
+    }
+
+    @Override
+    public List<User> selectUsers() {
+        return userDao.selectUsers();
     }
 }

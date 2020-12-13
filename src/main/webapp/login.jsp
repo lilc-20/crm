@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
 	String basePath = request.getScheme() + "://"
-			+ request.getServerName() + "/"
+			+ request.getServerName() + ":"
 			+ request.getServerPort()
 			+ request.getContextPath() + "/";
 %>
@@ -14,6 +14,10 @@
 	<script type="text/javascript">
 
 		$(function (){
+
+			if (window.top != window){
+				window.top.location = window.location;
+			}
 
 			$("#loginAct").val("");
 			$("#loginAct").focus();
@@ -37,7 +41,7 @@
 			if ("" == loginPwd || "" == loginAct){
 				$("#msg").html("账号或密码不能为空");
 				return ;
-			};
+			}
 
 			$.ajax({
 				url : "settings/user/login.do",

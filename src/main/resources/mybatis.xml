@@ -11,6 +11,7 @@
 
     <typeAliases>
         <package name="cn.edu.hzau.crm.settings.domain"/>
+        <package name="cn.edu.hzau.crm.workbench.domain"/>
     </typeAliases>
 
     <environments default="test">
@@ -26,5 +27,6 @@
     </environments>
     <mappers>
         <package name="cn.edu.hzau.crm.settings.dao"/>
+        <package name="cn.edu.hzau.crm.workbench.dao"/>
     </mappers>
 </configuration>

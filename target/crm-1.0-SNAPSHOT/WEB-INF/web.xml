@@ -33,4 +33,14 @@
         <url-pattern>/settings/user/login.do</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>ActivityController</servlet-name>
+        <servlet-class>cn.edu.hzau.crm.workbench.web.controller.ActivityController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ActivityController</servlet-name>
+        <url-pattern>/workbench/activity/selectUsers.do</url-pattern>
+        <url-pattern>/workbench/activity/save.do</url-pattern>
+    </servlet-mapping>
+
 </web-app>
