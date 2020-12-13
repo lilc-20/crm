@@ -7,17 +7,16 @@
 %>
 <html>
 <head>
-	<base <%=basePath%>>
-<meta charset="UTF-8">
-<link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
-<script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
-<script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+	<base <%=basePath%> />
+	<link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+	<script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
+	<script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 
 		$(function (){
 
-			$("#loginAct").val();
-			$("#loginPwd").focus();
+			$("#loginAct").val("");
+			$("#loginAct").focus();
 
 			$(window).keydown(function (event){
 				if (event.keyCode == 13){
@@ -49,7 +48,11 @@
 				},
 				dataType : "json",
 				success : function (resp){
-					alert(resp);
+					if(resp.success){
+						window.location.href = "workbench/index.jsp";
+					}else {
+						$("#msg").html(resp.msg);
+					}
 				}
 			});
 		};

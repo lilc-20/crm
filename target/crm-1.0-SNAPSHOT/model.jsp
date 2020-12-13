@@ -14,7 +14,7 @@
 %>
 <html>
 <head>
-    <base <%=basePath%>>
+    <base href="<%=basePath%>" />
     <title>Title</title>
 
     <script>
