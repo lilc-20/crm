@@ -8,6 +8,7 @@ import cn.edu.hzau.crm.utils.DateTimeUtil;
 import cn.edu.hzau.crm.utils.PrintJson;
 import cn.edu.hzau.crm.utils.ServiceFactory;
 import cn.edu.hzau.crm.utils.UUIDUtil;
+import cn.edu.hzau.crm.vo.Pagination;
 import cn.edu.hzau.crm.workbench.domain.Activity;
 import cn.edu.hzau.crm.workbench.service.ActivityService;
 
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 public class ActivityController extends HttpServlet {
@@ -29,6 +31,10 @@ public class ActivityController extends HttpServlet {
 
         if ("/workbench/activity/save.do".equals(servletPath)){
             save(request, response);
+        }
+
+        if ("/workbench/activity/pageList.do".equals(servletPath)){
+            pageList(request, response);
         }
     }
 
@@ -66,4 +72,32 @@ public class ActivityController extends HttpServlet {
         boolean success = activityService.addActivity(activity);
         PrintJson.printJsonFlag(response, success);
     }
+
+    private void pageList(HttpServletRequest request, HttpServletResponse response) {
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        Integer pageNo = Integer.valueOf(request.getParameter("pageNo"));
+        Integer pageSize = Integer.valueOf(request.getParameter("pageSize"));
+        Integer skipCount = (pageNo - 1) * pageSize;
+        String owner = request.getParameter("owner");
+        String name = request.getParameter("name");
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
+
+        HashMap map = new HashMap();
+        map.put("skipCount", skipCount);
+        map.put("pageSize", pageSize);
+        map.put("owner", owner);
+        map.put("name", name);
+        map.put("startDate", startDate);
+        map.put("endDate", endDate);
+
+        Pagination<Activity> pagination = activityService.pageList(map);
+        int totalPages = pagination.getTotal() % pageSize == 0 ?
+                pagination.getTotal() / pageSize : pagination.getTotal() / pageSize + 1;
+        pagination.setTotalPages(totalPages);
+
+        PrintJson.printJsonObj(response, pagination);
+    }
+
 }
