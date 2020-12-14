@@ -11,4 +11,8 @@ public interface ActivityDao {
     List<Activity> selectActivities(HashMap map);
 
     int selectCounts(HashMap map);
+
+    int selectById(String[] ids);
+
+    int deleteById(String[] ids);
 }

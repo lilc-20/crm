@@ -9,4 +9,6 @@ public interface ActivityService {
     boolean addActivity(Activity activity);
 
     Pagination<Activity> pageList(HashMap map);
+
+    boolean delete(String[] ids);
 }

@@ -42,6 +42,12 @@
 
 		search();
 
+		clean();
+
+		check();
+
+		deleteActivity();
+
 	});
 
 	function addActivity(){
@@ -84,13 +90,20 @@
 						$("#createActivityModal").modal("hide");
 						$("#add-activity")[0].reset();
 					}
-					pageList(1,2);
+					pageList(1,$("#activityPage").bs_pagination('getOption', 'rowsPerPage'));
 				}
 			});
 		});
 	}
 
 	function pageList(pageNo, pageSize){
+		$("#checkAll").prop("checked", false);
+
+		$("#search-name").val($.trim($("#hidden-name").val()));
+		$("#search-owner").val($.trim($("#hidden-owner").val()));
+		$("#search-startDate").val($.trim($("#hidden-startDate").val()));
+		$("#search-endDate").val($.trim($("#hidden-endDate").val()));
+
 		$.ajax({
 			url : "workbench/activity/pageList.do",
 			type : "get",
@@ -107,7 +120,7 @@
 				var html = "";
 				$.each(data.dataList, function (i, item){
 					html += '<tr class="active">';
-					html += '<td><input type="checkbox" id="' + item.id + '" /></td>'
+					html += '<td><input type="checkbox" name="xz" id="' + item.id + '" /></td>'
 					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/activity/detail.jsp\';">' + item.name + '</a></td>';
 					html += '<td>' + item.owner + '</td>';
 					html += '<td>' + item.startDate + '</td>';
@@ -142,15 +155,74 @@
 
 	function search(){
 		$("#search-btn").click(function (){
+			$("#hidden-name").val($.trim($("#search-name").val()));
+			$("#hidden-owner").val($.trim($("#search-owner").val()));
+			$("#hidden-startDate").val($.trim($("#search-startDate").val()));
+			$("#hidden-endDate").val($.trim($("#search-endDate").val()));
 			pageList(1,$("#activityPage").bs_pagination('getOption', 'rowsPerPage'));
 		});
+	}
+
+	function check(){
+		$("#checkAll").click(function (){
+			$("input[name=xz]").prop("checked", this.checked);
+		});
+
+		$("#activityBody").on("click", $("input[name=xz]"), function (){
+			$("#checkAll").prop("checked", $("input[name=xz]").length == $("input[name=xz]:checked").length);
+		});
+	}
+
+	function clean(){
+		$("#clean-btn").click(function (){
+			$("#hidden-name").val("");
+			$("#hidden-owner").val("");
+			$("#hidden-startDate").val("");
+			$("#hidden-endDate").val("");
+			pageList(1,$("#activityPage").bs_pagination('getOption', 'rowsPerPage'));
+		});
+	}
+
+	function deleteActivity(){
+		$("#del-btn").click(function (){
+			var $checked = $("input[name=xz]:checked");
+			if ($checked.length == 0){
+				alert("请选择要删除的活动");
+			}else {
+				if (confirm("确定要删除选中的记录吗？")){
+					var param = "";
+					$.each($checked, function (i, item){
+						param += "id=" + item.id + "&";
+					});
+					param = param.substring(0, param.lastIndexOf("&"));
+
+					$.ajax({
+						url : "workbench/activity/delete.do",
+						type : "post",
+						data : param,
+						dataType : "json",
+						success : function (resp){
+							//"success" : true/false
+							if (resp.success){
+								pageList(1,$("#activityPage").bs_pagination('getOption', 'rowsPerPage'));
+							}
+						}
+					});
+				}
+			}
+		});
+
+
 	}
 	
 </script>
 </head>
 <body>
 
-	<input type="hidden" id="hide">
+	<input type="hidden" id="hidden-name"/>
+	<input type="hidden" id="hidden-owner"/>
+	<input type="hidden" id="hidden-startDate"/>
+	<input type="hidden" id="hidden-endDate"/>
 
 	<!-- 创建市场活动的模态窗口 -->
 	<div class="modal fade" id="createActivityModal" role="dialog">
@@ -324,6 +396,7 @@
 				  </div>
 				  
 				  <button type="button" class="btn btn-default" id="search-btn">查询</button>
+					<button type="button" class="btn btn-default" id="clean-btn">清空</button>
 				  
 				</form>
 			</div>
@@ -331,7 +404,7 @@
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" id="create-activity"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-danger" id="del-btn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				
 			</div>
@@ -339,7 +412,7 @@
 				<table class="table table-hover">
 					<thead>
 						<tr style="color: #B3B3B3;">
-							<td><input type="checkbox" /></td>
+							<td><input type="checkbox" id="checkAll" /></td>
 							<td>名称</td>
                             <td>所有者</td>
 							<td>开始日期</td>

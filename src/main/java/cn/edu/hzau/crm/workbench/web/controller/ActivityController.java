@@ -36,6 +36,10 @@ public class ActivityController extends HttpServlet {
         if ("/workbench/activity/pageList.do".equals(servletPath)){
             pageList(request, response);
         }
+
+        if ("/workbench/activity/delete.do".equals(servletPath)){
+            delete(request, response);
+        }
     }
 
     private void selectUsers(HttpServletRequest request, HttpServletResponse response) {
@@ -98,6 +102,16 @@ public class ActivityController extends HttpServlet {
         pagination.setTotalPages(totalPages);
 
         PrintJson.printJsonObj(response, pagination);
+    }
+
+    private void delete(HttpServletRequest request, HttpServletResponse response) {
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        String[] ids = request.getParameterValues("id");
+
+        boolean success = activityService.delete(ids);
+
+        PrintJson.printJsonFlag(response, success);
     }
 
 }

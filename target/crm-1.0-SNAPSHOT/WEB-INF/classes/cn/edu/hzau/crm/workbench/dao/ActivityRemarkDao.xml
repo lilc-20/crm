@@ -4,4 +4,20 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.edu.hzau.crm.workbench.dao.ActivityRemarkDao">
 
+    <select id="selectByActId" resultType="int">
+        select count(*) from tbl_activity_remark
+        where activityId in
+        <foreach collection="array" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <delete id="deleteByActId">
+        delete from tbl_activity_remark
+        where activityId in
+        <foreach collection="array" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
 </mapper>
