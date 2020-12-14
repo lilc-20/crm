@@ -20,4 +20,9 @@
         </foreach>
     </delete>
 
+    <select id="selectRemarks" resultType="cn.edu.hzau.crm.workbench.domain.ActivityRemark">
+        select * from tbl_activity_remark
+        where activityId = #{id}
+    </select>
+
 </mapper>

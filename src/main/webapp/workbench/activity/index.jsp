@@ -126,7 +126,7 @@
 				$.each(data.dataList, function (i, item){
 					html += '<tr class="active">';
 					html += '<td><input type="checkbox" name="xz" id="' + item.id + '" /></td>'
-					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/activity/detail.jsp\';">' + item.name + '</a></td>';
+					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/activity/detail.do?id=' + item.id + '\';">' + item.name + '</a></td>';
 					html += '<td>' + item.owner + '</td>';
 					html += '<td>' + item.startDate + '</td>';
 					html += '<td>' + item.endDate + '</td>';

@@ -75,4 +75,14 @@ public class ActivityServiceImpl implements ActivityService {
         return result == 1 ? true : false;
     }
 
+    @Override
+    public Activity detail(String id) {
+        return activityDao.detail(id);
+    }
+
+    @Override
+    public List<ActivityRemark> selectRemarks(String id) {
+        return activityRemarkDao.selectRemarks(id);
+    }
+
 }

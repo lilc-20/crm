@@ -2,6 +2,7 @@ package cn.edu.hzau.crm.workbench.web.controller;
 
 import cn.edu.hzau.crm.settings.domain.User;
 import cn.edu.hzau.crm.settings.service.UserService;
+import cn.edu.hzau.crm.workbench.domain.ActivityRemark;
 import cn.edu.hzau.crm.workbench.service.impl.ActivityServiceImpl;
 import cn.edu.hzau.crm.settings.service.impl.UserServiceImpl;
 import cn.edu.hzau.crm.utils.DateTimeUtil;
@@ -47,6 +48,14 @@ public class ActivityController extends HttpServlet {
 
         if ("/workbench/activity/update.do".equals(servletPath)){
             update(request, response);
+        }
+
+        if ("/workbench/activity/detail.do".equals(servletPath)){
+            detail(request, response);
+        }
+
+        if ("/workbench/activity/remark.do".equals(servletPath)){
+            remark(request, response);
         }
     }
 
@@ -159,6 +168,27 @@ public class ActivityController extends HttpServlet {
 
         boolean success = activityService.update(activity);
         PrintJson.printJsonFlag(response, success);
+    }
+
+    private void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        String id = request.getParameter("id");
+
+        Activity activity = activityService.detail(id);
+        request.setAttribute("activity", activity);
+
+        request.getRequestDispatcher("/workbench/activity/detail.jsp").forward(request, response);
+    }
+
+    private void remark(HttpServletRequest request, HttpServletResponse response) {
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        String id = request.getParameter("id");
+
+        List<ActivityRemark> remarks = activityService.selectRemarks(id);
+
+        PrintJson.printJsonObj(response, remarks);
     }
 
 }
