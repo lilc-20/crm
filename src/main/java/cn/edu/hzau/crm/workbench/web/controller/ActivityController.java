@@ -2,7 +2,7 @@ package cn.edu.hzau.crm.workbench.web.controller;
 
 import cn.edu.hzau.crm.settings.domain.User;
 import cn.edu.hzau.crm.settings.service.UserService;
-import cn.edu.hzau.crm.settings.service.impl.ActivityServiceImpl;
+import cn.edu.hzau.crm.workbench.service.impl.ActivityServiceImpl;
 import cn.edu.hzau.crm.settings.service.impl.UserServiceImpl;
 import cn.edu.hzau.crm.utils.DateTimeUtil;
 import cn.edu.hzau.crm.utils.PrintJson;
@@ -39,6 +39,14 @@ public class ActivityController extends HttpServlet {
 
         if ("/workbench/activity/delete.do".equals(servletPath)){
             delete(request, response);
+        }
+
+        if ("/workbench/activity/edit.do".equals(servletPath)){
+            edit(request, response);
+        }
+
+        if ("/workbench/activity/update.do".equals(servletPath)){
+            update(request, response);
         }
     }
 
@@ -111,6 +119,45 @@ public class ActivityController extends HttpServlet {
 
         boolean success = activityService.delete(ids);
 
+        PrintJson.printJsonFlag(response, success);
+    }
+
+    private void edit(HttpServletRequest request, HttpServletResponse response) {
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        String id = request.getParameter("id");
+
+        HashMap map = activityService.edit(id);
+
+        PrintJson.printJsonObj(response, map);
+    }
+
+    private void update(HttpServletRequest request, HttpServletResponse response) {
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        String id = request.getParameter("id");
+        String owner = request.getParameter("owner");
+        String name = request.getParameter("name");
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
+        String cost = request.getParameter("cost");
+        String description = request.getParameter("description");
+        String editTime = DateTimeUtil.getSysTime();
+        String editBy = ((User) request.getSession().getAttribute("user")).getName();
+
+        Activity activity = new Activity();
+
+        activity.setId(id);
+        activity.setOwner(owner);
+        activity.setName(name);
+        activity.setStartDate(startDate);
+        activity.setEndDate(endDate);
+        activity.setCost(cost);
+        activity.setDescription(description);
+        activity.setEditTime(editTime);
+        activity.setEditBy(editBy);
+
+        boolean success = activityService.update(activity);
         PrintJson.printJsonFlag(response, success);
     }
 

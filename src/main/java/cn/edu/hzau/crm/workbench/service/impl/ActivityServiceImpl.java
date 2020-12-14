@@ -1,5 +1,7 @@
-package cn.edu.hzau.crm.settings.service.impl;
+package cn.edu.hzau.crm.workbench.service.impl;
 
+import cn.edu.hzau.crm.settings.dao.UserDao;
+import cn.edu.hzau.crm.settings.domain.User;
 import cn.edu.hzau.crm.utils.SqlSessionUtil;
 import cn.edu.hzau.crm.vo.Pagination;
 import cn.edu.hzau.crm.workbench.dao.ActivityDao;
@@ -12,8 +14,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ActivityServiceImpl implements ActivityService {
-    ActivityDao activityDao = SqlSessionUtil.getSqlSession().getMapper(ActivityDao.class);
-    ActivityRemarkDao activityRemarkDao = SqlSessionUtil.getSqlSession().getMapper(ActivityRemarkDao.class);
+    private ActivityDao activityDao = SqlSessionUtil.getSqlSession().getMapper(ActivityDao.class);
+    private ActivityRemarkDao activityRemarkDao = SqlSessionUtil.getSqlSession().getMapper(ActivityRemarkDao.class);
+    private UserDao userDao = SqlSessionUtil.getSqlSession().getMapper(UserDao.class);
+
 
     @Override
     public boolean addActivity(Activity activity) {
@@ -52,4 +56,23 @@ public class ActivityServiceImpl implements ActivityService {
 
         return success;
     }
+
+    @Override
+    public HashMap edit(String id) {
+        List<User> users = userDao.selectUsers();
+        Activity activity = activityDao.selectActivityById(id);
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("users", users);
+        map.put("activity", activity);
+
+        return map;
+    }
+
+    @Override
+    public boolean update(Activity activity) {
+        int result = activityDao.update(activity);
+        return result == 1 ? true : false;
+    }
+
 }
