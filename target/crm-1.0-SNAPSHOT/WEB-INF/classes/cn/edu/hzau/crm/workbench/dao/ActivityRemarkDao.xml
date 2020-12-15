@@ -32,13 +32,22 @@
     </delete>
 
     <insert id="insertRemark">
-        insert into tbl_activity_remark set
-        id = #{id},
-        noteContent = #{noteContent},
-        createTime = #{createTime},
-        createBy = #{createBy},
-        editFlag = #{editFlag},
-        activityId = #{activityId}
+        insert into tbl_activity_remark(
+        id,
+        noteContent,
+        createTime ,
+        createBy,
+        editFlag,
+        activityId
+        )
+        value (
+        #{id},
+        #{noteContent},
+        #{createTime},
+        #{createBy},
+        #{editFlag},
+        #{activityId}
+        )
     </insert>
 
     <update id="update">
