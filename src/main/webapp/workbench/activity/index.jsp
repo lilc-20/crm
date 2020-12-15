@@ -250,10 +250,10 @@
 						$("#edit-endDate").val(resp.activity.endDate);
 						$("#edit-cost").val(resp.activity.cost);
 						$("#edit-description").val(resp.activity.description);
+
+						$("#editActivityModal").modal("show");
 					}
 				});
-
-				$("#editActivityModal").modal("show");
 			}
 		});
 	}
@@ -281,8 +281,6 @@
 							$("#activityPage").bs_pagination('getOption', 'rowsPerPage'));
 				}
 			});
-
-			$("#editActivityModal").modal("hide");
 		});
 	}
 	

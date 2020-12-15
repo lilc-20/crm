@@ -57,6 +57,18 @@ public class ActivityController extends HttpServlet {
         if ("/workbench/activity/remark.do".equals(servletPath)){
             remark(request, response);
         }
+
+        if ("/workbench/activity/delRemark.do".equals(servletPath)){
+            delRemark(request, response);
+        }
+
+        if ("/workbench/activity/saveRemark.do".equals(servletPath)){
+            saveRemark(request, response);
+        }
+
+        if ("/workbench/activity/updateRemark.do".equals(servletPath)){
+            updateRemark(request, response);
+        }
     }
 
     private void selectUsers(HttpServletRequest request, HttpServletResponse response) {
@@ -189,6 +201,58 @@ public class ActivityController extends HttpServlet {
         List<ActivityRemark> remarks = activityService.selectRemarks(id);
 
         PrintJson.printJsonObj(response, remarks);
+    }
+
+    private void delRemark(HttpServletRequest request, HttpServletResponse response) {
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        String id = request.getParameter("id");
+        boolean success = activityService.delRemark(id);
+
+        PrintJson.printJsonFlag(response, success);
+    }
+
+    private void saveRemark(HttpServletRequest request, HttpServletResponse response) {
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        String id = UUIDUtil.getUUID();
+        String noteContent = request.getParameter("noteContent");
+        String createTime = DateTimeUtil.getSysTime();
+        String createBy = request.getParameter("createBy");
+        String activityId = request.getParameter("activityId");
+        String editFlag = request.getParameter("editFlag");
+
+        ActivityRemark activityRemark = new ActivityRemark();
+        activityRemark.setId(id);
+        activityRemark.setNoteContent(noteContent);
+        activityRemark.setCreateBy(createBy);
+        activityRemark.setCreateTime(createTime);
+        activityRemark.setActivityId(activityId);
+        activityRemark.setEditFlag(editFlag);
+        boolean success = activityService.saveRemark(activityRemark);
+
+        PrintJson.printJsonFlag(response, success);
+    }
+
+    private void updateRemark(HttpServletRequest request, HttpServletResponse response) {
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        String id = request.getParameter("id");
+        String noteContent = request.getParameter("noteContent");
+        String editTime = DateTimeUtil.getSysTime();
+        String editBy = request.getParameter("editBy");
+        String editFlag = request.getParameter("editFlag");
+
+        ActivityRemark activityRemark = new ActivityRemark();
+        activityRemark.setId(id);
+        activityRemark.setNoteContent(noteContent);
+        activityRemark.setEditBy(editBy);
+        activityRemark.setEditTime(editTime);
+        activityRemark.setEditFlag(editFlag);
+
+        boolean success = activityService.updateRemark(activityRemark);
+
+        PrintJson.printJsonFlag(response, success);
     }
 
 }

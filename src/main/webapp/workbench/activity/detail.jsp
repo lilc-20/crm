@@ -54,7 +54,23 @@ String basePath = request.getScheme() + "://"
 		});
 
 		remark();
-	});
+
+        $("#remarkBody").on("mouseover",".remarkDiv",function(){
+            $(this).children("div").children("div").show();
+        })
+        $("#remarkBody").on("mouseout",".remarkDiv",function(){
+            $(this).children("div").children("div").hide();
+        })
+
+        edit();
+
+        update();
+
+        deleteActivity();
+
+        saveRemark();
+
+    });
 
 	function remark(){
 		$.ajax({
@@ -71,12 +87,12 @@ String basePath = request.getScheme() + "://"
 					html += '<div class="remarkDiv" style="height: 60px;" id="' + item.id + '">';
 					html += '<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
 					html += '<div style="position: relative; top: -40px; left: 40px;" >';
-					html += '<h5>' + item.noteContent + '</h5>';
-					html += 'font color="gray">市场活动</font> <font color="gray">-</font> <b>${activity.name}</b> <small style="color: gray;"> ' + item.editFlag == 0 ? item.createTime : item.editTIme + '由' + item.editFlag == 0 ? item.createBy : item.createTime + '</small>';
+					html += '<h5 id="content' + item.id +'">' + item.noteContent + '</h5>';
+					html += '<font color="gray">市场活动</font> <font color="gray">-</font> <b>${activity.name}</b> <small style="color: gray;"> ' + (item.editFlag == 1 ? item.editTime : item.createTime) + '由' + (item.editFlag == 1 ? item.editBy : item.createBy) + '</small>';
 					html += '<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
-					html += '<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #FF0000;"></span></a>';
-					html += '<nbsp;&nbsp;&nbsp;&nbsp;';
-					html += '<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FF0000;"></span></a>';
+					html += '<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" onclick="editRemark(\''+ item.id +'\')" style="font-size: 20px; color: #FF0000;"></span></a>';
+					html += '&nbsp;&nbsp;&nbsp;&nbsp;';
+					html += '<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" onclick="delRemark(\''+ item.id +'\')" style="font-size: 20px; color: #FF0000;"></span></a>';
 					html += '</div>';
 					html += '</div>';
 					html += '</div>';
@@ -85,6 +101,159 @@ String basePath = request.getScheme() + "://"
 			}
 		});
 	}
+
+    function delRemark(id) {
+	    if (confirm("确认要删除吗？")){
+            $.ajax({
+                url : "workbench/activity/delRemark.do",
+                type : "post",
+                data : {
+                    "id" : id
+                },
+                dataType : "json",
+                success : function (resp){
+                    //"success" : true/false
+                    if (resp.success){
+                        remark();
+                    }
+                }
+            });
+        }
+    }
+
+    function edit(){
+        $("#edit-btn").click(function (){
+            $.ajax({
+                url : "workbench/activity/edit.do",
+                type : "post",
+                data : {
+                    "id" : "${activity.id}"
+                },
+                dataType : "json",
+                success : function (resp){
+                    //"users" : "user" , "activity" : "activity"
+                    var html = "";
+                    $.each(resp.users, function (i, item){
+                        html += "<option value='" + item.id + "'>" + item.name + "</option>"
+                    });
+                    $("#edit-owner").html(html);
+                    $("#edit-owner").val(resp.activity.owner);
+
+                    $("#edit-id").val(resp.activity.id);
+                    $("#edit-name").val(resp.activity.name);
+                    $("#edit-startDate").val(resp.activity.startDate);
+                    $("#edit-endDate").val(resp.activity.endDate);
+                    $("#edit-cost").val(resp.activity.cost);
+                    $("#edit-description").val(resp.activity.description);
+
+                    $("#editActivityModal").modal("show");
+                }
+            });
+        });
+    }
+
+    function update(){
+        $("#updateAct-btn").click(function (){
+            $.ajax({
+                url : "workbench/activity/update.do",
+                type : "post",
+                data : {
+                    "id" : "${activity.id}",
+                    "owner" : $.trim($("#edit-owner").val()),
+                    "name" : $.trim($("#edit-name").val()),
+                    "startDate" : $.trim($("#edit-startDate").val()),
+                    "endDate" : $.trim($("#edit-endDate").val()),
+                    "cost" : $.trim($("#edit-cost").val()),
+                    "description" : $.trim($("#edit-description").val())
+                },
+                dataType : "json",
+                success : function (resp){
+                    if (resp.success){
+                        $("#editActivityModal").modal("hide");
+                        //刷新
+                        window.location.reload();
+                    }
+                }
+            });
+        });
+    }
+
+    function deleteActivity() {
+        $("#delAct-btn").click(function () {
+            if (confirm("确认删除该活动吗")){
+                $.ajax({
+                    url : "workbench/activity/delete.do",
+                    type : "post",
+                    data : {
+                        "id" : "${activity.id}"
+                    },
+                    dataType : "json",
+                    success : function (resp){
+                        //"success" : true/false
+                        if (resp.success){
+                            //回退
+                            window.location.href = "workbench/activity/index.jsp";
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function saveRemark(){
+	    $("#saveRemark-btn").click(function (){
+            $.ajax({
+                url : "workbench/activity/saveRemark.do",
+                type : "post",
+                data : {
+                    "noteContent" : $("#remark").val(),
+                    "createBy" : "${user.name}",
+                    "editFlag" : "0",
+                    "activityId" : "${activity.id}"
+                },
+                dataType : "json",
+                success : function (resp){
+                    //"success" : true/false
+                    if (resp.success){
+                        $("#remark").val("");
+
+                        $("#cancelAndSaveBtn").hide();
+                        //设置remarkDiv的高度为130px
+                        $("#remarkDiv").css("height","90px");
+                        cancelAndSaveBtnDefault = true;
+
+                        remark();
+                    }
+                }
+            });
+        });
+    }
+
+    function editRemark(id){
+	    $("#editRemarkModal").modal("show");
+	    $("#noteContent").val($("#content" + id).text());
+        $("#updateRemark-btn").unbind('click');
+        $("#updateRemark-btn").click(function (){
+            $.ajax({
+                url : "workbench/activity/updateRemark.do",
+                type : "post",
+                data : {
+                    "id" : id,
+                    "noteContent" : $("#noteContent").val(),
+                    "editBy" : "${user.name}",
+                    "editFlag" : "1"
+                },
+                dataType : "json",
+                success : function (resp){
+                    //"success : ture/false
+                    if (resp.success){
+                        $("#editRemarkModal").modal("hide");
+                        remark();
+                    }
+                }
+            });
+        });
+    }
 	
 </script>
 
@@ -101,12 +270,12 @@ String basePath = request.getScheme() + "://"
                     <button type="button" class="close" data-dismiss="modal">
                         <span aria-hidden="true">×</span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel">修改备注</h4>
+                    <h4 class="modal-title" id="myModalLabel1">修改备注</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form">
                         <div class="form-group">
-                            <label for="edit-describe" class="col-sm-2 control-label">内容</label>
+                            <label for="edit-description" class="col-sm-2 control-label">内容</label>
                             <div class="col-sm-10" style="width: 81%;">
                                 <textarea class="form-control" rows="3" id="noteContent"></textarea>
                             </div>
@@ -115,7 +284,7 @@ String basePath = request.getScheme() + "://"
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary" id="updateRemarkBtn">更新</button>
+                    <button type="button" class="btn btn-primary" id="updateRemark-btn">更新</button>
                 </div>
             </div>
         </div>
@@ -129,49 +298,46 @@ String basePath = request.getScheme() + "://"
                     <button type="button" class="close" data-dismiss="modal">
                         <span aria-hidden="true">×</span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel">修改市场活动</h4>
+                    <h4 class="modal-title" id="myModalLabel2">修改市场活动</h4>
                 </div>
                 <div class="modal-body">
 
                     <form class="form-horizontal" role="form">
 
                         <div class="form-group">
-                            <label for="edit-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
+                            <label for="edit-owner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <select class="form-control" id="edit-marketActivityOwner">
-                                    <option>zhangsan</option>
-                                    <option>lisi</option>
-                                    <option>wangwu</option>
+                                <select class="form-control" id="edit-owner">
                                 </select>
                             </div>
-                            <label for="edit-marketActivityName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
+                            <label for="edit-name" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="edit-marketActivityName" value="发传单">
+                                <input type="text" class="form-control" id="edit-name"/>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="edit-startTime" class="col-sm-2 control-label">开始日期</label>
+                            <label for="edit-startDate" class="col-sm-2 control-label">开始日期</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="edit-startTime" value="2020-10-10">
+                                <input type="text" class="form-control" id="edit-startDate"/>
                             </div>
-                            <label for="edit-endTime" class="col-sm-2 control-label">结束日期</label>
+                            <label for="edit-endDate" class="col-sm-2 control-label">结束日期</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="edit-endTime" value="2020-10-20">
+                                <input type="text" class="form-control" id="edit-endDate"/>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="edit-cost" class="col-sm-2 control-label">成本</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="edit-cost" value="5,000">
+                                <input type="text" class="form-control" id="edit-cost"/>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="edit-describe" class="col-sm-2 control-label">描述</label>
+                            <label for="edit-description" class="col-sm-2 control-label">描述</label>
                             <div class="col-sm-10" style="width: 81%;">
-                                <textarea class="form-control" rows="3" id="edit-describe">市场活动Marketing，是指品牌主办或参与的展览会议与公关市场活动，包括自行主办的各类研讨会、客户交流会、演示会、新产品发布会、体验会、答谢会、年会和出席参加并布展或演讲的展览会、研讨会、行业交流会、颁奖典礼等</textarea>
+                                <textarea class="form-control" rows="3" id="edit-description"></textarea>
                             </div>
                         </div>
 
@@ -180,7 +346,7 @@ String basePath = request.getScheme() + "://"
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">更新</button>
+                    <button type="button" class="btn btn-primary" id="updateAct-btn">更新</button>
                 </div>
             </div>
         </div>
@@ -197,8 +363,8 @@ String basePath = request.getScheme() + "://"
 			<h3>市场活动-${activity.name} <small>${activity.startDate} ~ ${activity.endDate}</small></h3>
 		</div>
 		<div style="position: relative; height: 50px; width: 250px;  top: -72px; left: 700px;">
-			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
-			<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+			<button type="button" class="btn btn-default" id="edit-btn"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
+            <button type="button" class="btn btn-danger" id="delAct-btn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 		</div>
 	</div>
 	
@@ -248,7 +414,7 @@ String basePath = request.getScheme() + "://"
 	</div>
 	
 	<!-- 备注 -->
-	<div style="position: relative; top: 30px; left: 40px;">
+	<div style="position: relative; top: 30px; left: 40px;" id="remarkBody">
 		<div class="page-header">
 			<h4>备注</h4>
 		</div>
@@ -260,7 +426,7 @@ String basePath = request.getScheme() + "://"
 				<textarea id="remark" class="form-control" style="width: 850px; resize : none;" rows="2"  placeholder="添加备注..."></textarea>
 				<p id="cancelAndSaveBtn" style="position: relative;left: 737px; top: 10px; display: none;">
 					<button id="cancelBtn" type="button" class="btn btn-default">取消</button>
-					<button type="button" class="btn btn-primary">保存</button>
+					<button type="button" class="btn btn-primary" id="saveRemark-btn">保存</button>
 				</p>
 			</form>
 		</div>

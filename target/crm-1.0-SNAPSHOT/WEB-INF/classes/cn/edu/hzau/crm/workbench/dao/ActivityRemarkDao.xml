@@ -23,6 +23,31 @@
     <select id="selectRemarks" resultType="cn.edu.hzau.crm.workbench.domain.ActivityRemark">
         select * from tbl_activity_remark
         where activityId = #{id}
+        order by editTime desc , createTime desc
     </select>
+
+    <delete id="deleteById">
+        delete from tbl_activity_remark
+        where id = #{id}
+    </delete>
+
+    <insert id="insertRemark">
+        insert into tbl_activity_remark set
+        id = #{id},
+        noteContent = #{noteContent},
+        createTime = #{createTime},
+        createBy = #{createBy},
+        editFlag = #{editFlag},
+        activityId = #{activityId}
+    </insert>
+
+    <update id="update">
+        update tbl_activity_remark set
+        noteContent = #{noteContent},
+        editTime = #{editTime},
+        editBy = #{editBy},
+        editFlag = #{editFlag}
+        where id = #{id}
+    </update>
 
 </mapper>
