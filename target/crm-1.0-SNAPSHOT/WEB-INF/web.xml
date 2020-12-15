@@ -23,6 +23,9 @@
         <url-pattern>*.jsp</url-pattern>
     </filter-mapping>
 
+    <listener>
+        <listener-class>cn.edu.hzau.crm.web.listener.SysInitListener</listener-class>
+    </listener>
 
     <servlet>
         <servlet-name>UserController</servlet-name>
@@ -50,6 +53,15 @@
         <url-pattern>/workbench/activity/delRemark.do</url-pattern>
         <url-pattern>/workbench/activity/saveRemark.do</url-pattern>
         <url-pattern>/workbench/activity/updateRemark.do</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ClueController</servlet-name>
+        <servlet-class>cn.edu.hzau.crm.workbench.web.controller.ClueController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ClueController</servlet-name>
+        <url-pattern>/workbench/clue/xxx.do</url-pattern>
     </servlet-mapping>
 
 </web-app>
