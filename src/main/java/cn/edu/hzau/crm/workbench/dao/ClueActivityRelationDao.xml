@@ -5,7 +5,20 @@
 
 <mapper namespace="cn.edu.hzau.crm.workbench.dao.ClueActivityRelationDao">
 	
-	
+	<select id="selectByClueId" resultType="cn.edu.hzau.crm.workbench.domain.ClueActivityRelation">
+		select * from tbl_clue_activity_relation
+		where clueId = #{id}
+	</select>
+
+	<delete id="deleteByActId">
+		delete from tbl_clue_activity_relation
+		where activityId = #{activityId} and clueId = #{clueId}
+	</delete>
+
+	<insert id="addRelation">
+		insert into tbl_clue_activity_relation(id, clueId, activityId)
+		value (#{id}, #{clueId}, #{activityId})
+	</insert>
   	
 </mapper>
 

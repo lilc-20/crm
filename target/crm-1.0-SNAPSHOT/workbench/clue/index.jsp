@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
 String basePath = request.getScheme() + "://"
 + request.getServerName() + ":"
@@ -21,8 +21,19 @@ String basePath = request.getScheme() + "://"
 <script type="text/javascript">
 
 	$(function(){
+
+		$(".time").datetimepicker({
+			minView: "month",
+			language:  'zh-CN',
+			format: 'yyyy-mm-dd',
+			autoclose: true,
+			todayBtn: true,
+			pickerPosition: "top-left"
+		});
+
 		create();
-		
+
+		save();
 		
 	});
 
@@ -45,6 +56,41 @@ String basePath = request.getScheme() + "://"
 			});
 		});
 	}
+
+	function save(){
+		$("#save-btn").click(function (){
+			$.ajax({
+				url : "workbench/clue/save.do",
+				type : "post",
+				data : {
+					"fullname" : $("#create-fullname").val(),
+					"appellation" : $("#create-appellation").val(),
+					"owner" : $("#create-owner").val(),
+					"company" : $("#create-company").val(),
+					"job" : $("#create-job").val(),
+					"email" : $("#create-email").val(),
+					"phone" : $("#create-phone").val(),
+					"website" : $("#create-website").val(),
+					"mphone" : $("#create-mphone").val(),
+					"state" : $("#create-state").val(),
+					"source" : $("#create-source").val(),
+					"description" : $("#create-description").val(),
+					"contactSummary" : $("#create-contactSummary").val(),
+					"nextContactTime" : $("#create-nextContactTime").val(),
+					"address" : $("#create-address").val()
+				},
+				dataType : "json",
+				success : function (resp){
+					//"success" : true/false
+					if (resp.success){
+						$("#createClueModal").modal("hide");
+						$("#create-form")[0].reset();
+						//刷新页面
+					}
+				}
+			});
+		});
+	}
 	
 </script>
 </head>
@@ -61,7 +107,7 @@ String basePath = request.getScheme() + "://"
 					<h4 class="modal-title" id="myModalLabel">创建线索</h4>
 				</div>
 				<div class="modal-body">
-					<form class="form-horizontal" role="form">
+					<form class="form-horizontal" role="form" id="create-form">
 					
 						<div class="form-group">
 							<label for="create-owner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
@@ -81,12 +127,14 @@ String basePath = request.getScheme() + "://"
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="create-appellation">
 									<option></option>
-
+									<c:forEach items="${appellation}" var="a">
+										<option value="${a.value}">${a.text}</option>
+									</c:forEach>
 								</select>
 							</div>
-							<label for="create-surname" class="col-sm-2 control-label">姓名<span style="font-size: 15px; color: red;">*</span></label>
+							<label for="create-fullname" class="col-sm-2 control-label">姓名<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-surname">
+								<input type="text" class="form-control" id="create-fullname">
 							</div>
 						</div>
 						
@@ -117,11 +165,13 @@ String basePath = request.getScheme() + "://"
 							<div class="col-sm-10" style="width: 300px;">
 								<input type="text" class="form-control" id="create-mphone">
 							</div>
-							<label for="create-status" class="col-sm-2 control-label">线索状态</label>
+							<label for="create-state" class="col-sm-2 control-label">线索状态</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<select class="form-control" id="create-status">
-								  <option></option>
-
+								<select class="form-control" id="create-state">
+									<option></option>
+									<c:forEach items="${clueState}" var="c">
+										<option value="${c.value}">${c.text}</option>
+									</c:forEach>
 								</select>
 							</div>
 						</div>
@@ -131,16 +181,18 @@ String basePath = request.getScheme() + "://"
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="create-source">
 								  <option></option>
-
+									<c:forEach items="${source}" var="s">
+										<option value="${s.value}">${s.text}</option>
+									</c:forEach>
 								</select>
 							</div>
 						</div>
 						
 
 						<div class="form-group">
-							<label for="create-describe" class="col-sm-2 control-label">线索描述</label>
+							<label for="create-description" class="col-sm-2 control-label">线索描述</label>
 							<div class="col-sm-10" style="width: 81%;">
-								<textarea class="form-control" rows="3" id="create-describe"></textarea>
+								<textarea class="form-control" rows="3" id="create-description"></textarea>
 							</div>
 						</div>
 						
@@ -156,7 +208,7 @@ String basePath = request.getScheme() + "://"
 							<div class="form-group">
 								<label for="create-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
 								<div class="col-sm-10" style="width: 300px;">
-									<input type="text" class="form-control" id="create-nextContactTime">
+									<input type="text" class="form-control time" id="create-nextContactTime">
 								</div>
 							</div>
 						</div>
@@ -176,7 +228,7 @@ String basePath = request.getScheme() + "://"
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+					<button type="button" class="btn btn-primary" id="save-btn">保存</button>
 				</div>
 			</div>
 		</div>
@@ -464,7 +516,7 @@ String basePath = request.getScheme() + "://"
 					<tbody>
 						<tr>
 							<td><input type="checkbox" /></td>
-							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/clue/detail.jsp';">李四先生</a></td>
+							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/clue/detail.do?id=6c756e4339b64c4e934d834103268a26';">李四先生</a></td>
 							<td>动力节点</td>
 							<td>010-84846003</td>
 							<td>12345678901</td>

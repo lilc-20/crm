@@ -1,6 +1,7 @@
 package cn.edu.hzau.crm.workbench.dao;
 
 import cn.edu.hzau.crm.workbench.domain.Activity;
+import cn.edu.hzau.crm.workbench.domain.ClueActivityRelation;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,4 +22,8 @@ public interface ActivityDao {
     int update(Activity activity);
 
     Activity detail(String id);
+
+    Activity selectByRelationId(String activityId);
+
+    List<Activity> selectOutOfId(HashMap map);
 }

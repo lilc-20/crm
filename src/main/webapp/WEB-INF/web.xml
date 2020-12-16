@@ -62,6 +62,12 @@
     <servlet-mapping>
         <servlet-name>ClueController</servlet-name>
         <url-pattern>/workbench/clue/getUsers.do</url-pattern>
+        <url-pattern>/workbench/clue/save.do</url-pattern>
+        <url-pattern>/workbench/clue/detail.do</url-pattern>
+        <url-pattern>/workbench/clue/activity.do</url-pattern>
+        <url-pattern>/workbench/clue/deleteRelation.do</url-pattern>
+        <url-pattern>/workbench/clue/relationList.do</url-pattern>
+        <url-pattern>/workbench/clue/addRelation.do</url-pattern>
     </servlet-mapping>
 
 </web-app>
