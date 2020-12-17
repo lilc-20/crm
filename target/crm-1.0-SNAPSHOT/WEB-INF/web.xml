@@ -72,4 +72,13 @@
         <url-pattern>/workbench/clue/convert.do</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>TranController</servlet-name>
+        <servlet-class>cn.edu.hzau.crm.workbench.web.controller.TranController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TranController</servlet-name>
+        <url-pattern>/workbench/transaction/users.do</url-pattern>
+    </servlet-mapping>
+
 </web-app>
