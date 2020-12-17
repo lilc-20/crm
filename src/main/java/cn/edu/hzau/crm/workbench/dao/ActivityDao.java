@@ -2,6 +2,7 @@ package cn.edu.hzau.crm.workbench.dao;
 
 import cn.edu.hzau.crm.workbench.domain.Activity;
 import cn.edu.hzau.crm.workbench.domain.ClueActivityRelation;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,4 +27,6 @@ public interface ActivityDao {
     Activity selectByRelationId(String activityId);
 
     List<Activity> selectOutOfId(HashMap map);
+
+    List<Activity> selectWithName(@Param("clueId") String clueId, @Param("name") String name);
 }

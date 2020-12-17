@@ -4,8 +4,25 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="cn.edu.hzau.crm.workbench.dao.ContactsRemarkDao">
-	
-  	
+
+    <insert id="save">
+        insert into tbl_contacts_remark(
+        id,
+        noteContent,
+        createBy,
+        createTime,
+        editFlag,
+        contactsId
+        ) value (
+        #{id},
+        #{noteContent},
+        #{createBy},
+        #{createTime},
+        #{editFlag},
+        #{contactsId}
+        )
+    </insert>
+
 </mapper>
 
 

@@ -68,6 +68,8 @@
         <url-pattern>/workbench/clue/deleteRelation.do</url-pattern>
         <url-pattern>/workbench/clue/relationList.do</url-pattern>
         <url-pattern>/workbench/clue/addRelation.do</url-pattern>
+        <url-pattern>/workbench/clue/searchWithName.do</url-pattern>
+        <url-pattern>/workbench/clue/convert.do</url-pattern>
     </servlet-mapping>
 
 </web-app>

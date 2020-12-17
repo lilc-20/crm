@@ -8,6 +8,7 @@ import cn.edu.hzau.crm.utils.UUIDUtil;
 import cn.edu.hzau.crm.workbench.domain.Activity;
 import cn.edu.hzau.crm.workbench.domain.Clue;
 import cn.edu.hzau.crm.workbench.domain.ClueActivityRelation;
+import cn.edu.hzau.crm.workbench.domain.Tran;
 import cn.edu.hzau.crm.workbench.service.ClueService;
 import cn.edu.hzau.crm.workbench.service.impl.ClueServiceImpl;
 
@@ -51,6 +52,60 @@ public class ClueController extends HttpServlet {
             addRelation(request, response);
         }
 
+        if ("/workbench/clue/searchWithName.do".equals(servletPath)){
+            searchWithName(request, response);
+        }
+
+        if ("/workbench/clue/convert.do".equals(servletPath)){
+            convert(request, response);
+        }
+
+    }
+
+    private void convert(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String clueId = request.getParameter("clueId");
+        String flag = request.getParameter("flag");
+
+        Tran tran = null;
+        String createBy = ((User) request.getSession().getAttribute("user")).getName();
+
+        if ("checked".equals(flag)){
+            tran = new Tran();
+            String money = request.getParameter("money");
+            String name = request.getParameter("name");
+            String expectedDate = request.getParameter("expectedDate");
+            String stage = request.getParameter("stage");
+            String activityId = request.getParameter("activityId");
+            String id = UUIDUtil.getUUID();
+            String createTime = DateTimeUtil.getSysTime();
+
+            tran.setMoney(money);
+            tran.setName(name);
+            tran.setExpectedDate(expectedDate);
+            tran.setStage(stage);
+            tran.setActivityId(activityId);
+            tran.setId(id);
+            tran.setCreateTime(createTime);
+            tran.setCreateBy(createBy);
+        }
+
+        ClueService clueService = (ClueService) ServiceFactory.getService(new ClueServiceImpl());
+        boolean success = clueService.convert(clueId, tran, createBy);
+
+        if (success){
+            response.sendRedirect(request.getContextPath() + "/workbench/clue/index.jsp?");
+        }
+    }
+
+    private void searchWithName(HttpServletRequest request, HttpServletResponse response) {
+        ClueService clueService = (ClueService) ServiceFactory.getService(new ClueServiceImpl());
+
+        String clueId = request.getParameter("clueId");
+        String name = request.getParameter("name");
+
+        List<Activity> activities = clueService.searchWithName(clueId, name);
+
+        PrintJson.printJsonObj(response, activities);
     }
 
     private void addRelation(HttpServletRequest request, HttpServletResponse response) {

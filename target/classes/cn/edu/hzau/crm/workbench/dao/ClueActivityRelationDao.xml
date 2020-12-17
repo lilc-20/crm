@@ -4,6 +4,14 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="cn.edu.hzau.crm.workbench.dao.ClueActivityRelationDao">
+
+	<delete id="deleteByClueId">
+		delete from tbl_clue_activity_relation where clueId=#{clueId}
+	</delete>
+
+	<select id="selectActIds" resultType="java.lang.String">
+		select activityId from tbl_clue_activity_relation where clueId=#{clueId}
+	</select>
 	
 	<select id="selectByClueId" resultType="cn.edu.hzau.crm.workbench.domain.ClueActivityRelation">
 		select * from tbl_clue_activity_relation

@@ -5,6 +5,14 @@
 
 <mapper namespace="cn.edu.hzau.crm.workbench.dao.ClueDao">
 
+    <delete id="deleteById">
+        delete from tbl_clue where id=#{clueId}
+    </delete>
+
+    <select id="getById" resultType="Clue">
+        select * from tbl_clue where id=#{id}
+    </select>
+
     <insert id="insertClue">
         insert into tbl_clue(
         id,
@@ -72,6 +80,7 @@
         from tbl_clue a
         join tbl_user b on
         a.owner = b.id
+        where a.id=#{id}
     </select>
 
 </mapper>

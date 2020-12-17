@@ -9,4 +9,8 @@ public interface ClueDao {
     int insertClue(Clue clue);
 
     Clue selectById(String id);
+
+    Clue getById(String clueId);
+
+    void deleteById(String clueId);
 }
