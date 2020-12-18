@@ -1,3 +1,6 @@
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.Set" %>
+<%@ page import="java.util.Iterator" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
@@ -17,6 +20,8 @@ String basePath = request.getScheme() + "://"
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="jquery/bs_typeahead/bootstrap3-typeahead.min.js"></script>
+
 
 	<script>
 
@@ -40,9 +45,44 @@ String basePath = request.getScheme() + "://"
 				pickerPosition: "top-left"
 			});
 
+			$("#create-customerName").typeahead({
+				source: function (query, process) {
+					$.post(
+							"workbench/transaction/getCustomerName.do",
+							{ "name" : query },
+							function (data) {
+								//alert(data);
+								//"names" : [name1],[name2]
+								process(data);
+							},
+							"json"
+					);
+				},
+				delay: 1000
+			});
+
 
 			$("#save-btn").click(function (){
 				$("#create-tran").submit();
+			});
+
+			$("#create-transactionStage").change(function (){
+				var json = {
+				<%
+					HashMap<String, String> s2pMap = (HashMap<String, String>) application.getAttribute("s2pMap");
+					Set<String> keys = s2pMap.keySet();
+					Iterator<String> iterator = keys.iterator();
+					while (iterator.hasNext()){
+						String key = iterator.next();
+						String value = s2pMap.get(key);
+				%>
+					"<%=key%>" : <%=value%>,
+				<%
+					}
+				%>
+				};
+				var stage = $("#create-transactionStage").val();
+				$("#create-possibility").val(json[stage]);
 			});
 		});
 
@@ -166,7 +206,7 @@ String basePath = request.getScheme() + "://"
 				<select class="form-control" id="create-transactionOwner" name="owner">
 					<option></option>
 					  <c:forEach items="${users}" var="u">
-						  <option value="${u.id}" ${u.id eq user.id ? "selected" : ""}>${user.name}</option>
+						  <option value="${u.id}" ${u.id eq user.id ? "selected" : ""}>${u.name}</option>
 					  </c:forEach>
 				</select>
 			</div>
@@ -188,10 +228,9 @@ String basePath = request.getScheme() + "://"
 		</div>
 		
 		<div class="form-group">
-			<label for="create-accountName" class="col-sm-2 control-label">客户名称<span style="font-size: 15px; color: red;">*</span></label>
+			<label for="create-customerName" class="col-sm-2 control-label">客户名称<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-accountName" placeholder="支持自动补全，输入客户不存在则新建">
-				<input type="hidden" name="customerId">
+				<input type="text" class="form-control" id="create-customerName" name="customerName" autocomplete="off" placeholder="支持自动补全，输入客户不存在则新建">
 			</div>
 			<label for="create-transactionStage" class="col-sm-2 control-label">阶段<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">

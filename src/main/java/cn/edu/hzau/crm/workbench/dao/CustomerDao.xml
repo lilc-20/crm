@@ -5,6 +5,10 @@
 
 <mapper namespace="cn.edu.hzau.crm.workbench.dao.CustomerDao">
 
+    <select id="selectNames" resultType="java.lang.String">
+        select name from tbl_customer where name like '%' #{name} '%'
+    </select>
+
     <select id="selectByName" resultType="Customer">
         select * from tbl_customer where name=#{company}
     </select>

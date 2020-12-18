@@ -12,8 +12,10 @@ import cn.edu.hzau.crm.workbench.domain.Clue;
 import cn.edu.hzau.crm.workbench.domain.ClueActivityRelation;
 import cn.edu.hzau.crm.workbench.domain.Tran;
 import cn.edu.hzau.crm.workbench.service.ClueService;
+import cn.edu.hzau.crm.workbench.service.CustomerService;
 import cn.edu.hzau.crm.workbench.service.TranService;
 import cn.edu.hzau.crm.workbench.service.impl.ClueServiceImpl;
+import cn.edu.hzau.crm.workbench.service.impl.CustomerServiceImpl;
 import cn.edu.hzau.crm.workbench.service.impl.TranServiceImpl;
 
 import javax.servlet.ServletException;
@@ -31,6 +33,67 @@ public class TranController extends HttpServlet {
         if ("/workbench/transaction/users.do".equals(servletPath)){
             getUsers(request, response);
         }
+
+        if ("/workbench/transaction/getCustomerName.do".equals(servletPath)){
+            getCustomerName(request, response);
+        }
+
+        if ("/workbench/transaction/createTran.do".equals(servletPath)){
+            createTran(request, response);
+        }
+    }
+
+    private void createTran(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        TranService tranService = (TranService) ServiceFactory.getService(new TranServiceImpl());
+
+        String id = UUIDUtil.getUUID();
+        String owner = request.getParameter("owner");
+        String money = request.getParameter("money");
+        String name = request.getParameter("name");
+        String expectedDate = request.getParameter("expectedDate");
+        String customerName = request.getParameter("customerName");
+        String stage = request.getParameter("stage");
+        String type = request.getParameter("type");
+        String source = request.getParameter("source");
+        String activityId = request.getParameter("activityId");
+        String contactsId = request.getParameter("contactsId");
+        String createBy = ((User) request.getSession().getAttribute("user")).getName();
+        String createTime = DateTimeUtil.getSysTime();
+        String description = request.getParameter("description");
+        String contactSummary = request.getParameter("contactSummary");
+        String nextContactTime = request.getParameter("nextContactTime");
+
+        Tran tran = new Tran();
+        tran.setId(id);
+        tran.setOwner(owner);
+        tran.setMoney(money);
+        tran.setName(name);
+        tran.setExpectedDate(expectedDate);
+        tran.setStage(stage);
+        tran.setType(type);
+        tran.setSource(source);
+        tran.setContactsId(contactsId);
+        tran.setActivityId(activityId);
+        tran.setCreateBy(createBy);
+        tran.setCreateTime(createTime);
+        tran.setDescription(description);
+        tran.setContactSummary(contactSummary);
+        tran.setNextContactTime(nextContactTime);
+        boolean success = tranService.addTran(tran, customerName);
+
+        if (success){
+            response.sendRedirect(request.getContextPath() + "/workbench/transaction/index.jsp");
+        }
+    }
+
+    private void getCustomerName(HttpServletRequest request, HttpServletResponse response) {
+        CustomerService customerService = (CustomerService) ServiceFactory.getService(new CustomerServiceImpl());
+
+        String name = request.getParameter("name");
+
+        List<String> names = customerService.selectNames(name);
+
+        PrintJson.printJsonObj(response, names);
     }
 
     private void getUsers(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

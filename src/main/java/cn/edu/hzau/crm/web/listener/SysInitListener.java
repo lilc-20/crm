@@ -8,9 +8,7 @@ import cn.edu.hzau.crm.utils.ServiceFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class SysInitListener implements ServletContextListener {
     @Override
@@ -18,6 +16,7 @@ public class SysInitListener implements ServletContextListener {
 //        System.out.println("--init--");
         ServletContext servletContext = servletContextEvent.getServletContext();
 
+//        System.out.println("--dictionary--");
         DicService dicService = (DicService) ServiceFactory.getService(new DicServiceImpl());
         HashMap<String, List<DicValue>> values = dicService.getDicValues();
         Set<String> types = values.keySet();
@@ -25,8 +24,20 @@ public class SysInitListener implements ServletContextListener {
             List<DicValue> dicValues = values.get(type);
             servletContext.setAttribute(type, dicValues);
         }
+//        System.out.println("--dic-end--");
 
-//        System.out.println("--end--");
+//        System.out.println("--Stage2Possibility--");
+        ResourceBundle bundle = ResourceBundle.getBundle("Stage2Possibility");
+        Enumeration<String> keys = bundle.getKeys();
+        HashMap<String, String> s2pMap = new HashMap<>();
+        while (keys.hasMoreElements()){
+            String key = keys.nextElement();
+            String string = bundle.getString(key);
+            s2pMap.put(key, string);
+        }
+        servletContext.setAttribute("s2pMap", s2pMap);
+//        System.out.println("--s2p-end--");
+
     }
 
     @Override

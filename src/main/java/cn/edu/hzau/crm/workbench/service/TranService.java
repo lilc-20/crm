@@ -1,9 +1,8 @@
 package cn.edu.hzau.crm.workbench.service;
 
-import cn.edu.hzau.crm.settings.domain.User;
-
-import java.util.List;
+import cn.edu.hzau.crm.workbench.domain.Tran;
 
 public interface TranService {
 
+    boolean addTran(Tran tran, String customerName);
 }
