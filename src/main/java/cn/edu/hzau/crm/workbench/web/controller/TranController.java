@@ -7,10 +7,7 @@ import cn.edu.hzau.crm.utils.DateTimeUtil;
 import cn.edu.hzau.crm.utils.PrintJson;
 import cn.edu.hzau.crm.utils.ServiceFactory;
 import cn.edu.hzau.crm.utils.UUIDUtil;
-import cn.edu.hzau.crm.workbench.domain.Activity;
-import cn.edu.hzau.crm.workbench.domain.Clue;
-import cn.edu.hzau.crm.workbench.domain.ClueActivityRelation;
-import cn.edu.hzau.crm.workbench.domain.Tran;
+import cn.edu.hzau.crm.workbench.domain.*;
 import cn.edu.hzau.crm.workbench.service.ClueService;
 import cn.edu.hzau.crm.workbench.service.CustomerService;
 import cn.edu.hzau.crm.workbench.service.TranService;
@@ -23,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 public class TranController extends HttpServlet {
@@ -41,6 +39,78 @@ public class TranController extends HttpServlet {
         if ("/workbench/transaction/createTran.do".equals(servletPath)){
             createTran(request, response);
         }
+
+        if ("/workbench/transaction/detail.do".equals(servletPath)){
+            detail(request, response);
+        }
+
+        if ("/workbench/transaction/selectHisByTranId.do".equals(servletPath)){
+            selectHisByTranId(request, response);
+        }
+
+        if ("/workbench/transaction/changeStage.do".equals(servletPath)){
+            changeStage(request, response);
+        }
+    }
+
+    private void changeStage(HttpServletRequest request, HttpServletResponse response) {
+        TranService tranService = (TranService) ServiceFactory.getService(new TranServiceImpl());
+
+        String id = request.getParameter("id");
+        String stage = request.getParameter("stage");
+        String money = request.getParameter("money");
+        String expectedDate = request.getParameter("expectedDate");
+        String editBy = ((User) request.getSession().getAttribute("user")).getName();
+        String editTime = DateTimeUtil.getSysTime();
+
+        Tran tran = new Tran();
+        tran.setId(id);
+        tran.setEditBy(editBy);
+        tran.setEditTime(editTime);
+        tran.setMoney(money);
+        tran.setStage(stage);
+        tran.setExpectedDate(expectedDate);
+
+        boolean success = tranService.changeStage(tran);
+        HashMap<String,Object> map = new HashMap<>();
+        map.put("success", success);
+        map.put("tran", tran);
+        HashMap<String,String> s2pMap = (HashMap<String, String>) this.getServletContext().getAttribute("s2pMap");
+        String possibility = s2pMap.get(tran.getStage());
+        tran.setPossibility(possibility);
+
+        PrintJson.printJsonObj(response, map);
+    }
+
+    private void selectHisByTranId(HttpServletRequest request, HttpServletResponse response) {
+        TranService tranService = (TranService) ServiceFactory.getService(new TranServiceImpl());
+
+        String tranId = request.getParameter("tranId");
+
+        List<TranHistory> histories = tranService.selectByTranId(tranId);
+        HashMap<String, String> s2pMap = (HashMap<String, String>) this.getServletContext().getAttribute("s2pMap");
+        for (TranHistory history : histories) {
+            String stage = history.getStage();
+            String possibility = s2pMap.get(stage);
+            history.setPossibility(possibility);
+        }
+
+        PrintJson.printJsonObj(response, histories);
+    }
+
+    private void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        TranService tranService = (TranService) ServiceFactory.getService(new TranServiceImpl());
+
+        String id = request.getParameter("id");
+
+        Tran tran = tranService.selectById(id);
+        String stage = tran.getStage();
+        HashMap<String, String> s2pMap = (HashMap<String, String>) this.getServletContext().getAttribute("s2pMap");
+        String possibility = s2pMap.get(stage);
+
+        request.setAttribute("possibility", possibility);
+        request.setAttribute("tran", tran);
+        request.getRequestDispatcher("/workbench/transaction/detail.jsp").forward(request, response);
     }
 
     private void createTran(HttpServletRequest request, HttpServletResponse response) throws IOException {

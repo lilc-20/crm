@@ -10,6 +10,8 @@ import cn.edu.hzau.crm.workbench.domain.Tran;
 import cn.edu.hzau.crm.workbench.domain.TranHistory;
 import cn.edu.hzau.crm.workbench.service.TranService;
 
+import java.util.List;
+
 public class TranServiceImpl implements TranService {
     private TranDao tranDao = SqlSessionUtil.getSqlSession().getMapper(TranDao.class);
     private TranHistoryDao tranHistoryDao = SqlSessionUtil.getSqlSession().getMapper(TranHistoryDao.class);
@@ -51,6 +53,40 @@ public class TranServiceImpl implements TranService {
         tranHistory.setCreateBy(tran.getCreateBy());
         int count3 = tranHistoryDao.save(tranHistory);
         if (count3 != 1){
+            flag = false;
+        }
+
+        return flag;
+    }
+
+    @Override
+    public Tran selectById(String id) {
+        return tranDao.selectById(id);
+    }
+
+    @Override
+    public List<TranHistory> selectByTranId(String tranId) {
+        return tranHistoryDao.selectByTranId(tranId);
+    }
+
+    @Override
+    public boolean changeStage(Tran tran) {
+        boolean flag = true;
+
+        int count1 = tranDao.updateById(tran);
+        if (count1 != 1){
+            flag = false;
+        }
+
+        TranHistory tranHistory = new TranHistory();
+        tranHistory.setId(UUIDUtil.getUUID());
+        tranHistory.setCreateBy(tran.getEditBy());
+        tranHistory.setCreateTime(tran.getEditTime());
+        tranHistory.setMoney(tran.getMoney());
+        tranHistory.setExpectedDate(tran.getExpectedDate());
+        tranHistory.setStage(tran.getStage());
+        int count2 = tranHistoryDao.save(tranHistory);
+        if (count2 != 1){
             flag = false;
         }
 

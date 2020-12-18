@@ -124,7 +124,7 @@ String basePath = request.getScheme() + "://"
 		<h3>更新交易</h3>
 	  	<div style="position: relative; top: -40px; left: 70%;">
 			<button type="button" class="btn btn-primary">更新</button>
-			<button type="button" class="btn btn-default">取消</button>
+			<button type="button" class="btn btn-default" onclick="window.location.href='workbench/transaction/detail.do?id=66aac6fbf1ba4c668bdde6daae10fd31'">取消</button>
 		</div>
 		<hr style="position: relative; top: -40px;">
 	</div>

@@ -9,4 +9,7 @@ public interface TranDao {
 
     int save(Tran tran);
 
+    Tran selectById(String id);
+
+    int updateById(Tran tran);
 }

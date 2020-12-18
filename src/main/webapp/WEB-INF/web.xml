@@ -81,6 +81,9 @@
         <url-pattern>/workbench/transaction/users.do</url-pattern>
         <url-pattern>/workbench/transaction/getCustomerName.do</url-pattern>
         <url-pattern>/workbench/transaction/createTran.do</url-pattern>
+        <url-pattern>/workbench/transaction/detail.do</url-pattern>
+        <url-pattern>/workbench/transaction/selectHisByTranId.do</url-pattern>
+        <url-pattern>/workbench/transaction/changeStage.do</url-pattern>
     </servlet-mapping>
 
 </web-app>
