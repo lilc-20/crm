@@ -10,7 +10,9 @@ import cn.edu.hzau.crm.workbench.domain.Tran;
 import cn.edu.hzau.crm.workbench.domain.TranHistory;
 import cn.edu.hzau.crm.workbench.service.TranService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TranServiceImpl implements TranService {
     private TranDao tranDao = SqlSessionUtil.getSqlSession().getMapper(TranDao.class);
@@ -91,5 +93,15 @@ public class TranServiceImpl implements TranService {
         }
 
         return flag;
+    }
+
+    @Override
+    public HashMap<String, Object> tranChart() {
+        int total = tranDao.selectCounts();
+        List<Map> data = tranDao.selectGroupByStage();
+        HashMap<String,Object> map = new HashMap<>();
+        map.put("total", total);
+        map.put("data", data);
+        return map;
     }
 }

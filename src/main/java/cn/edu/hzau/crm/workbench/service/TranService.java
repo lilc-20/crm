@@ -3,6 +3,7 @@ package cn.edu.hzau.crm.workbench.service;
 import cn.edu.hzau.crm.workbench.domain.Tran;
 import cn.edu.hzau.crm.workbench.domain.TranHistory;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface TranService {
@@ -14,4 +15,6 @@ public interface TranService {
     List<TranHistory> selectByTranId(String tranId);
 
     boolean changeStage(Tran tran);
+
+    HashMap<String, Object> tranChart();
 }

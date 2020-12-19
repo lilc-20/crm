@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TranController extends HttpServlet {
     @Override
@@ -51,6 +52,17 @@ public class TranController extends HttpServlet {
         if ("/workbench/transaction/changeStage.do".equals(servletPath)){
             changeStage(request, response);
         }
+
+        if ("/workbench/transaction/tranChart.do".equals(servletPath)){
+            tranChart(request, response);
+        }
+    }
+
+    private void tranChart(HttpServletRequest request, HttpServletResponse response) {
+        TranService tranService = (TranService) ServiceFactory.getService(new TranServiceImpl());
+        HashMap<String,Object> map = tranService.tranChart();
+
+        PrintJson.printJsonObj(response, map);
     }
 
     private void changeStage(HttpServletRequest request, HttpServletResponse response) {

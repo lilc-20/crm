@@ -5,6 +5,15 @@
 
 <mapper namespace="cn.edu.hzau.crm.workbench.dao.TranDao">
 
+    <select id="selectGroupByStage" resultType="java.util.Map">
+        select stage as name , count(*) as value
+        from tbl_tran group by stage
+    </select>
+
+    <select id="selectCounts" resultType="int">
+        select count(*) from tbl_tran
+    </select>
+
     <update id="updateById">
         update tbl_tran set
         stage=#{stage},
