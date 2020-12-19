@@ -26,7 +26,7 @@ public class LoginFilter implements Filter {
         if ("/login.jsp".equals(servletPath) || "/settings/user/login.do".equals(servletPath) || user != null){
             filterChain.doFilter(servletRequest, servletResponse);
         }else {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/login.html");
         }
 
     }
