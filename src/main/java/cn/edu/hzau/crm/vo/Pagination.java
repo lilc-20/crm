@@ -3,6 +3,7 @@ package cn.edu.hzau.crm.vo;
 import java.util.List;
 
 public class Pagination<T> {
+    private int i = 1;
     private int total;
     private int totalPages;
     private List<T> dataList;
